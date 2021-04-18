@@ -23,6 +23,7 @@ import us.myles.ViaVersion.bukkit.listeners.protocol1_9to1_8.HandItemCache;
 import us.myles.ViaVersion.bukkit.listeners.protocol1_9to1_8.PaperPatch;
 import us.myles.ViaVersion.bukkit.providers.BukkitBlockConnectionProvider;
 import us.myles.ViaVersion.bukkit.providers.BukkitInventoryQuickMoveProvider;
+import us.myles.ViaVersion.bukkit.providers.BukkitVehicleMoveProvider;
 import us.myles.ViaVersion.bukkit.providers.BukkitViaBulkChunkTranslator;
 import us.myles.ViaVersion.bukkit.providers.BukkitViaMovementTransmitter;
 import us.myles.ViaVersion.protocols.protocol1_12to1_11_1.providers.InventoryQuickMoveProvider;
@@ -31,6 +32,7 @@ import us.myles.ViaVersion.protocols.protocol1_13to1_12_2.blockconnections.provi
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.BulkChunkTranslatorProvider;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.HandItemProvider;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.MovementTransmitterProvider;
+import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.VehicleMoveProvider;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -114,6 +116,7 @@ public class BukkitViaLoader implements ViaPlatformLoader {
         if (ProtocolRegistry.SERVER_PROTOCOL < ProtocolVersion.v1_9.getVersion()) {
             Via.getManager().getProviders().use(BulkChunkTranslatorProvider.class, new BukkitViaBulkChunkTranslator());
             Via.getManager().getProviders().use(MovementTransmitterProvider.class, new BukkitViaMovementTransmitter());
+            Via.getManager().getProviders().use(VehicleMoveProvider.class, new BukkitVehicleMoveProvider());
 
             Via.getManager().getProviders().use(HandItemProvider.class, new HandItemProvider() {
                 @Override

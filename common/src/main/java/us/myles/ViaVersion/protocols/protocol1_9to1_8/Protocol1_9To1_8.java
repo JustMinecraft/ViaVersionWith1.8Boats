@@ -21,13 +21,7 @@ import us.myles.ViaVersion.protocols.protocol1_9to1_8.packets.InventoryPackets;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.packets.PlayerPackets;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.packets.SpawnPackets;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.packets.WorldPackets;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.BossBarProvider;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.BulkChunkTranslatorProvider;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.CommandBlockProvider;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.EntityIdProvider;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.HandItemProvider;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.MainHandProvider;
-import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.MovementTransmitterProvider;
+import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.*;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.storage.ClientChunks;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.storage.CommandBlockStorage;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.storage.EntityTracker1_9;
@@ -128,6 +122,7 @@ public class Protocol1_9To1_8 extends Protocol<ClientboundPackets1_8, Clientboun
         providers.register(EntityIdProvider.class, new EntityIdProvider());
         providers.register(BossBarProvider.class, new BossBarProvider());
         providers.register(MainHandProvider.class, new MainHandProvider());
+        providers.register(VehicleMoveProvider.class, new VehicleMoveProvider());
         providers.require(MovementTransmitterProvider.class);
     }
 

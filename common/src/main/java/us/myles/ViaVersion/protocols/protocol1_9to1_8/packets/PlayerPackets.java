@@ -19,6 +19,7 @@ import us.myles.ViaVersion.protocols.protocol1_9to1_8.chat.ChatRewriter;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.chat.GameMode;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.CommandBlockProvider;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.MainHandProvider;
+import us.myles.ViaVersion.protocols.protocol1_9to1_8.providers.VehicleMoveProvider;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.storage.ClientChunks;
 import us.myles.ViaVersion.protocols.protocol1_9to1_8.storage.EntityTracker1_9;
 import us.myles.ViaVersion.util.GsonUtil;
@@ -435,7 +436,6 @@ public class PlayerPackets {
         });
 
         protocol.cancelIncoming(ServerboundPackets1_9.TELEPORT_CONFIRM);
-        protocol.cancelIncoming(ServerboundPackets1_9.VEHICLE_MOVE);
         protocol.cancelIncoming(ServerboundPackets1_9.STEER_BOAT);
 
         protocol.registerIncoming(ServerboundPackets1_9.PLUGIN_MESSAGE, new PacketRemapper() {
@@ -528,6 +528,48 @@ public class PlayerPackets {
             public void registerMap() {
                 map(Type.BOOLEAN); // 0 - Ground
                 handler(new PlayerMovementMapper());
+            }
+        });
+
+        protocol.registerIncoming(ServerboundPackets1_9.VEHICLE_MOVE, null, new PacketRemapper() {
+            @Override
+            public void registerMap() {
+                map(Type.DOUBLE); // 0 - X
+                map(Type.DOUBLE); // 1 - Y
+                map(Type.DOUBLE); // 2 - Z
+                map(Type.FLOAT); // 3 - Yaw
+                map(Type.FLOAT); // 4 - Pitch
+                handler(new PacketHandler() {
+                    @Override
+                    public void handle(PacketWrapper wrapper) throws Exception {
+                        double x = wrapper.get(Type.DOUBLE, 0);
+                        double y = wrapper.get(Type.DOUBLE, 1);
+                        double z = wrapper.get(Type.DOUBLE, 2);
+                        float yaw = wrapper.get(Type.FLOAT, 0);
+                        float pitch = wrapper.get(Type.FLOAT, 1);
+
+                        wrapper.cancel();
+                        Via.getManager().getProviders().get(VehicleMoveProvider.class).doVehicleMove(x, y, z, yaw, pitch, wrapper.user());
+                    }
+                });
+            }
+        });
+
+        protocol.registerIncoming(ServerboundPackets1_9.STEER_VEHICLE, new PacketRemapper() {
+            @Override
+            public void registerMap() {
+                map(Type.FLOAT); // 0 - Sideways
+                map(Type.FLOAT); // 1 - Forward
+                map(Type.BYTE); // 2 - Mask: 0x1 = jump; 0x2 = dismount
+                handler(new PacketHandler() {
+                    @Override
+                    public void handle(PacketWrapper wrapper) throws Exception {
+                        if ((wrapper.get(Type.BYTE, 0) & 0x2) != 0x2) {
+                            // Only send this packet for a dismount
+                            wrapper.cancel();
+                        }
+                    }
+                });
             }
         });
     }

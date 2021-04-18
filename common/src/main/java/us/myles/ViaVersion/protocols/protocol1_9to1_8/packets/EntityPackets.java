@@ -128,7 +128,27 @@ public class EntityPackets {
                 map(Type.BYTE, toNewShort); // 2 - Y
                 map(Type.BYTE, toNewShort); // 3 - Z
 
-                map(Type.BOOLEAN); // 4 - On Ground
+            }
+        });
+        protocol.registerOutgoing(ClientboundPackets1_8.ENTITY_VELOCITY, new PacketRemapper() {
+
+            @Override
+            public void registerMap() {
+                map(Type.VAR_INT); // 0 - Entity ID
+                map(Type.SHORT); // 1 - Velocity X
+                map(Type.SHORT); // 2 - Velocity Y
+                map(Type.SHORT); // 3 - Velocity Z
+
+                handler(new PacketHandler() {
+                    @Override
+                    public void handle(PacketWrapper wrapper) throws Exception {
+                        int entityID = wrapper.get(Type.VAR_INT, 0);
+                        EntityTracker1_9 tracker = wrapper.user().get(EntityTracker1_9.class);
+                        if (((Integer) entityID).equals(tracker.getVehicleMap().get(tracker.getClientEntityId()))) {
+                            wrapper.cancel(); // Don't send velocity packets for the client's vehicle
+                        }
+                    }
+                });
             }
         });
         protocol.registerOutgoing(ClientboundPackets1_8.ENTITY_EQUIPMENT, new PacketRemapper() {
