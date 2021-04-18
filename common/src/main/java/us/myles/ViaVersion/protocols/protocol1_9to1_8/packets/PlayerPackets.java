@@ -566,9 +566,13 @@ public class PlayerPackets {
                     @Override
                     public void handle(PacketWrapper wrapper) throws Exception {
                         EntityTracker1_9 tracker = wrapper.user().get(EntityTracker1_9.class);
-                        int vehicleEntityId = tracker.getVehicleMap().get(tracker.getClientEntityId());
-                        EntityType entityType = tracker.getEntity(vehicleEntityId);
-                        if ((wrapper.get(Type.BYTE, 0) & 0x2) != 0x2 && !entityType.is(Entity1_10Types.EntityType.MINECART_RIDEABLE)) {
+                        EntityType entityType = null;
+                        if (tracker.getVehicleMap().containsKey(tracker.getClientEntityId())) {
+                            int vehicleEntityId = tracker.getVehicleMap().get(tracker.getClientEntityId());
+                            entityType = tracker.getEntity(vehicleEntityId);
+                        }
+
+                        if ((wrapper.get(Type.BYTE, 0) & 0x2) != 0x2 && (entityType == null || !entityType.is(Entity1_10Types.EntityType.MINECART_RIDEABLE))) {
                             // Only send this packet for a dismount or minecarts
                             wrapper.cancel();
                         }
