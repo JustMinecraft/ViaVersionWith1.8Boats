@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import us.myles.ViaVersion.api.PacketWrapper;
 import us.myles.ViaVersion.api.Via;
 import us.myles.ViaVersion.api.entities.Entity1_10Types;
+import us.myles.ViaVersion.api.entities.EntityType;
 import us.myles.ViaVersion.api.minecraft.item.Item;
 import us.myles.ViaVersion.api.remapper.PacketHandler;
 import us.myles.ViaVersion.api.remapper.PacketRemapper;
@@ -564,8 +565,11 @@ public class PlayerPackets {
                 handler(new PacketHandler() {
                     @Override
                     public void handle(PacketWrapper wrapper) throws Exception {
-                        if ((wrapper.get(Type.BYTE, 0) & 0x2) != 0x2) {
-                            // Only send this packet for a dismount
+                        EntityTracker1_9 tracker = wrapper.user().get(EntityTracker1_9.class);
+                        int vehicleEntityId = tracker.getVehicleMap().get(tracker.getClientEntityId());
+                        EntityType entityType = tracker.getEntity(vehicleEntityId);
+                        if ((wrapper.get(Type.BYTE, 0) & 0x2) != 0x2 && !entityType.is(Entity1_10Types.EntityType.MINECART_RIDEABLE)) {
+                            // Only send this packet for a dismount or minecarts
                             wrapper.cancel();
                         }
                     }
